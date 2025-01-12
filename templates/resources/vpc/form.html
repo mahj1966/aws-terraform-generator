@@ -1,0 +1,147 @@
+<div class="resource-specific-fields">
+    <div class="col-md-6">
+        <label class="form-label required">
+            CIDR BLOCK
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="IPv4 CIDR block for the VPC (e.g., 10.0.0.0/16). Choose a size that accommodates your future growth"></i>
+        </label>
+        <input type="text" class="form-control" name="cidr_block" required
+               pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}\/([0-9]|[1-2][0-9]|3[0-2])$"
+               data-validate="required,pattern"
+               placeholder="10.0.0.0/16">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            INSTANCE TENANCY
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="'default' allows shared hardware, 'dedicated' runs instances on dedicated hardware (higher cost)"></i>
+        </label>
+        <select class="form-select" name="instance_tenancy">
+            <option value="default">Default</option>
+            <option value="dedicated">Dedicated</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            DNS SUPPORT
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Enable DNS resolution through Amazon's DNS server. Recommended to keep enabled"></i>
+        </label>
+        <select class="form-select" name="enable_dns_support">
+            <option value="true">Enabled</option>
+            <option value="false">Disabled</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            DNS HOSTNAMES
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Assign public DNS hostnames to instances with public IPs in the VPC"></i>
+        </label>
+        <select class="form-select" name="enable_dns_hostnames">
+            <option value="true">Enabled</option>
+            <option value="false">Disabled</option>
+        </select>
+    </div>
+
+    <div class="subnet-section">
+        <h4 class="section-title">SUBNET CONFIGURATION</h4>
+        
+        <div class="col-md-12">
+            <label class="form-label required">
+                SUBNET CIDR BLOCKS
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="CIDR blocks for subnets, one per line. Each must be within the VPC CIDR and not overlap"></i>
+            </label>
+            <textarea class="form-control" name="subnet_cidr_blocks" required rows="3"
+                      data-validate="required,cidr-list"
+                      placeholder="10.0.1.0/24&#10;10.0.2.0/24&#10;10.0.3.0/24"></textarea>
+        </div>
+
+        <div class="col-md-12">
+            <label class="form-label required">
+                AVAILABILITY ZONES
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="Availability Zones for subnets, one per line. Must match number of CIDR blocks above"></i>
+            </label>
+            <textarea class="form-control" name="availability_zones" required rows="3"
+                      data-validate="required,az-list"
+                      placeholder="us-west-2a&#10;us-west-2b&#10;us-west-2c"></textarea>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            NAT GATEWAY
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Create NAT Gateway for private subnets to access internet. Incurs additional costs"></i>
+        </label>
+        <select class="form-select" name="enable_nat_gateway"
+                onchange="toggleNatFields(this.value)">
+            <option value="false">Disabled</option>
+            <option value="true">Enabled</option>
+        </select>
+    </div>
+
+    <div class="nat-fields" style="display: none;">
+        <div class="col-md-6">
+            <label class="form-label required-if-nat">
+                PUBLIC SUBNET ID
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="Subnet ID where NAT Gateway will be created. Must be a public subnet"></i>
+            </label>
+            <input type="text" class="form-control" name="nat_subnet_id"
+                   pattern="^subnet-[a-f0-9]{8,17}$"
+                   data-validate="pattern"
+                   data-required-if="enable_nat_gateway=true"
+                   placeholder="subnet-0123456789abcdef0">
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleNatFields(enabled) {
+    const natFields = document.querySelector('.nat-fields');
+    natFields.style.display = enabled === 'true' ? 'block' : 'none';
+    
+    natFields.querySelectorAll('[data-required-if]').forEach(field => {
+        field.required = enabled === 'true';
+    });
+}
+
+// Validate CIDR blocks and AZs match
+function validateSubnetConfig() {
+    const cidrBlocks = document.querySelector('textarea[name="subnet_cidr_blocks"]')
+        .value.split('\n').filter(line => line.trim());
+    const azs = document.querySelector('textarea[name="availability_zones"]')
+        .value.split('\n').filter(line => line.trim());
+    
+    const isValid = cidrBlocks.length === azs.length;
+    document.querySelector('textarea[name="availability_zones"]')
+        .setCustomValidity(isValid ? '' : 'Number of Availability Zones must match number of CIDR blocks');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const natEnabled = document.querySelector('select[name="enable_nat_gateway"]');
+    if (natEnabled.value) {
+        toggleNatFields(natEnabled.value);
+    }
+
+    // Add validation listeners
+    document.querySelector('textarea[name="subnet_cidr_blocks"]')
+        .addEventListener('input', validateSubnetConfig);
+    document.querySelector('textarea[name="availability_zones"]')
+        .addEventListener('input', validateSubnetConfig);
+});
+</script> 

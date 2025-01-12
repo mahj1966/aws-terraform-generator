@@ -1,0 +1,12 @@
+{% for resource_type, config in resources.items() %}
+<div class="col-md-4 mb-3">
+    <div class="card resource-card" data-resource="{{ resource_type }}">
+        <div class="card-body">
+            <h5 class="card-title">
+                {% include 'resources/' + resource_type + '_icon.html' ignore missing %}
+                {{ resource_type|upper|replace('_', ' ') }}
+            </h5>
+        </div>
+    </div>
+</div>
+{% endfor %} 

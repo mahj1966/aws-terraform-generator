@@ -1,0 +1,866 @@
+{% extends "base.html" %}
+
+{% block help_content %}
+<div class="help-container">
+    <div class="help-header">
+        <h1>AWS Resource Manager Documentation</h1>
+        <p class="lead">Comprehensive guide to using and understanding the AWS Resource Manager application</p>
+    </div>
+
+    <div class="search-container mb-4">
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="fas fa-search"></i>
+            </span>
+            <input type="text" class="form-control" id="docSearch" 
+                   placeholder="Search documentation...">
+        </div>
+    </div>
+
+    <div class="quick-links mb-4">
+        <h4>Quick Links</h4>
+        <div class="quick-links-grid">
+            <a href="#security" class="quick-link-item">
+                <i class="fas fa-shield-alt"></i>
+                <span>Security</span>
+            </a>
+            <a href="#resources" class="quick-link-item">
+                <i class="fas fa-cubes"></i>
+                <span>Resources</span>
+            </a>
+            <a href="#terraform" class="quick-link-item">
+                <i class="fas fa-code"></i>
+                <span>Terraform</span>
+            </a>
+            <a href="#usage" class="quick-link-item">
+                <i class="fas fa-book"></i>
+                <span>Usage Guide</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="help-navigation">
+        <ul class="nav nav-pills mb-4" id="helpTabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="overview-tab" data-bs-toggle="pill" href="#overview">Overview</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="resources-tab" data-bs-toggle="pill" href="#resources">Resources</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="architecture-tab" data-bs-toggle="pill" href="#architecture">Architecture</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="usage-tab" data-bs-toggle="pill" href="#usage">Usage Guide</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="reference-tab" data-bs-toggle="pill" href="#reference">API Reference</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="terraform-tab" data-bs-toggle="pill" href="#terraform">Terraform</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="security-tab" data-bs-toggle="pill" href="#security">Security</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="tab-content" id="helpContent">
+        <!-- Overview Section -->
+        <div class="tab-pane fade show active" id="overview">
+            <div class="progress-tracker">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">Reading Progress: 0%</span>
+            </div>
+            <h2>Application Overview</h2>
+            <p>AWS Resource Manager is a web-based application designed to simplify the creation and management of AWS resources. It provides a user-friendly interface for deploying common AWS services while following best practices and security guidelines.</p>
+            
+            <h3>Key Features</h3>
+            <ul>
+                <li>Intuitive web interface for AWS resource creation</li>
+                <li>Support for multiple AWS services (EC2, RDS, Lambda, etc.)</li>
+                <li>Built-in validation and security checks</li>
+                <li>Consistent resource tagging and naming</li>
+                <li>Real-time form validation and feedback</li>
+            </ul>
+
+            <h3>Technology Stack</h3>
+            <ul>
+                <li>Backend: Python Flask</li>
+                <li>Frontend: HTML5, CSS3, JavaScript</li>
+                <li>Styling: Bootstrap with custom Cyberpunk theme</li>
+                <li>AWS SDK: Boto3</li>
+            </ul>
+
+            <h3>Quick Start Guide</h3>
+            <div class="quick-start-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Choose Resource Type</h4>
+                        <p>Select the AWS resource you want to create from the available options.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Configure Settings</h4>
+                        <p>Fill in the required configuration fields with your desired settings.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Generate Terraform</h4>
+                        <p>Click generate to create your Terraform configuration file.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="related-content">
+                <h4>Related Topics</h4>
+                <div class="related-grid">
+                    <a href="#" class="related-item">
+                        <span class="related-title">Security Best Practices</span>
+                        <span class="related-desc">Learn about AWS security guidelines</span>
+                    </a>
+                    <!-- Add more related items -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Resources Section -->
+        <div class="tab-pane fade" id="resources">
+            <div class="progress-tracker">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">Reading Progress: 0%</span>
+            </div>
+            <h2>Supported AWS Resources</h2>
+            
+            <div class="resource-docs">
+                <h3>EC2 (Elastic Compute Cloud)</h3>
+                <p>Virtual servers in the cloud.</p>
+                <div class="resource-details">
+                    <h4>Key Features</h4>
+                    <ul>
+                        <li>Instance types and their use cases</li>
+                        <li>AMI selection guidelines</li>
+                        <li>Security group configuration</li>
+                        <li>Storage options</li>
+                    </ul>
+
+                    <h4>Configuration Options</h4>
+                    <ul>
+                        <li><strong>Instance Type:</strong> Choose from various CPU, memory, and network configurations</li>
+                        <li><strong>AMI:</strong> Select from available Amazon Machine Images</li>
+                        <li><strong>Storage:</strong> Configure EBS volumes and instance store</li>
+                        <li><strong>Network:</strong> VPC, subnet, and security group settings</li>
+                    </ul>
+                </div>
+
+                <h3>RDS (Relational Database Service)</h3>
+                <p>Managed relational databases.</p>
+                <div class="resource-details">
+                    <h4>Key Features</h4>
+                    <ul>
+                        <li>Supported database engines</li>
+                        <li>Instance sizing guidelines</li>
+                        <li>Backup and maintenance options</li>
+                        <li>Security considerations</li>
+                    </ul>
+
+                    <h4>Configuration Options</h4>
+                    <ul>
+                        <li><strong>Engine:</strong> Choose your preferred database engine</li>
+                        <li><strong>Instance Class:</strong> Select performance tier</li>
+                        <li><strong>Storage:</strong> Configure storage type and size</li>
+                        <li><strong>Backup:</strong> Set retention period and backup window</li>
+                    </ul>
+                </div>
+
+                <h3>Lambda</h3>
+                <p>Serverless compute service.</p>
+                <div class="resource-details">
+                    <h4>Key Features</h4>
+                    <ul>
+                        <li>Serverless execution environment</li>
+                        <li>Event-driven architecture</li>
+                        <li>Automatic scaling</li>
+                        <li>Pay-per-use pricing</li>
+                    </ul>
+
+                    <h4>Configuration Options</h4>
+                    <ul>
+                        <li><strong>Runtime:</strong> Python, Node.js, Java, etc.</li>
+                        <li><strong>Memory:</strong> 128MB to 10GB RAM</li>
+                        <li><strong>Timeout:</strong> Function execution time limit</li>
+                        <li><strong>VPC:</strong> Optional VPC connectivity</li>
+                    </ul>
+                </div>
+
+                <h3>DynamoDB</h3>
+                <p>Managed NoSQL database service.</p>
+                <div class="resource-details">
+                    <h4>Key Features</h4>
+                    <ul>
+                        <li>Fully managed NoSQL</li>
+                        <li>Automatic scaling</li>
+                        <li>Single-digit millisecond latency</li>
+                        <li>Built-in security</li>
+                    </ul>
+
+                    <h4>Configuration Options</h4>
+                    <ul>
+                        <li><strong>Table Name:</strong> Unique identifier for your table</li>
+                        <li><strong>Capacity Mode:</strong> Provisioned or On-demand</li>
+                        <li><strong>Keys:</strong> Partition and sort key configuration</li>
+                        <li><strong>Indexes:</strong> Secondary index options</li>
+                    </ul>
+                </div>
+
+                <h3>EKS (Elastic Kubernetes Service)</h3>
+                <p>Managed Kubernetes service.</p>
+                <div class="resource-details">
+                    <h4>Key Features</h4>
+                    <ul>
+                        <li>Managed Kubernetes control plane</li>
+                        <li>High availability</li>
+                        <li>Integration with AWS services</li>
+                        <li>Automated updates</li>
+                    </ul>
+
+                    <h4>Configuration Options</h4>
+                    <ul>
+                        <li><strong>Version:</strong> Kubernetes version selection</li>
+                        <li><strong>Node Groups:</strong> Worker node configuration</li>
+                        <li><strong>Networking:</strong> VPC and subnet settings</li>
+                        <li><strong>Authentication:</strong> IAM integration</li>
+                    </ul>
+                </div>
+
+                <h3>ElastiCache</h3>
+                <p>In-memory caching service.</p>
+                <div class="resource-details">
+                    <h4>Key Features</h4>
+                    <ul>
+                        <li>Redis and Memcached support</li>
+                        <li>Automatic failover</li>
+                        <li>Backup and restore</li>
+                        <li>Scalable performance</li>
+                    </ul>
+
+                    <h4>Configuration Options</h4>
+                    <ul>
+                        <li><strong>Engine:</strong> Redis or Memcached</li>
+                        <li><strong>Node Type:</strong> Cache instance size</li>
+                        <li><strong>Replication:</strong> Read replicas configuration</li>
+                        <li><strong>Security:</strong> Encryption and access control</li>
+                    </ul>
+                </div>
+
+                <h3>VPC (Virtual Private Cloud)</h3>
+                <p>Isolated cloud network.</p>
+                <div class="resource-details">
+                    <h4>Key Features</h4>
+                    <ul>
+                        <li>Network isolation</li>
+                        <li>Custom IP addressing</li>
+                        <li>Security controls</li>
+                        <li>Connectivity options</li>
+                    </ul>
+
+                    <h4>Configuration Options</h4>
+                    <ul>
+                        <li><strong>CIDR Block:</strong> IP address range</li>
+                        <li><strong>Subnets:</strong> Network segmentation</li>
+                        <li><strong>Routing:</strong> Traffic control</li>
+                        <li><strong>Security Groups:</strong> Firewall rules</li>
+                    </ul>
+                </div>
+
+                <h3>CloudFront</h3>
+                <p>Content delivery network service.</p>
+                <div class="resource-details">
+                    <h4>Key Features</h4>
+                    <ul>
+                        <li>Global content delivery</li>
+                        <li>Low latency</li>
+                        <li>DDoS protection</li>
+                        <li>SSL/TLS support</li>
+                    </ul>
+
+                    <h4>Configuration Options</h4>
+                    <ul>
+                        <li><strong>Origins:</strong> Content source configuration</li>
+                        <li><strong>Behaviors:</strong> Cache and security settings</li>
+                        <li><strong>SSL Certificate:</strong> HTTPS configuration</li>
+                        <li><strong>Price Class:</strong> Edge location coverage</li>
+                    </ul>
+                </div>
+
+                <h3>WAF (Web Application Firewall)</h3>
+                <p>Web application security service.</p>
+                <div class="resource-details">
+                    <h4>Key Features</h4>
+                    <ul>
+                        <li>Application layer protection</li>
+                        <li>Custom rule creation</li>
+                        <li>Real-time metrics</li>
+                        <li>Bot control</li>
+                    </ul>
+
+                    <h4>Configuration Options</h4>
+                    <ul>
+                        <li><strong>Rules:</strong> Security rule configuration</li>
+                        <li><strong>IP Sets:</strong> IP address filtering</li>
+                        <li><strong>Rate Limiting:</strong> Request throttling</li>
+                        <li><strong>Logging:</strong> Security event tracking</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="related-content">
+                <h4>Related Topics</h4>
+                <div class="related-grid">
+                    <a href="#" class="related-item">
+                        <span class="related-title">Security Best Practices</span>
+                        <span class="related-desc">Learn about AWS security guidelines</span>
+                    </a>
+                    <!-- Add more related items -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture Section -->
+        <div class="tab-pane fade" id="architecture">
+            <div class="progress-tracker">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">Reading Progress: 0%</span>
+            </div>
+            <h2>Application Architecture</h2>
+            
+            <h3>Component Overview</h3>
+            <div class="architecture-diagram">
+                <!-- Add your architecture diagram here -->
+                <img src="{{ url_for('static', filename='images/architecture.png') }}" alt="Architecture Diagram">
+            </div>
+
+            <h3>Key Components</h3>
+            <ul>
+                <li>Web Interface Layer</li>
+                <li>Business Logic Layer</li>
+                <li>AWS Integration Layer</li>
+                <li>Security Layer</li>
+            </ul>
+
+            <h3>Design Patterns</h3>
+            <ul>
+                <li>MVC Architecture</li>
+                <li>Factory Pattern for Resource Creation</li>
+                <li>Strategy Pattern for Validation</li>
+            </ul>
+
+            <div class="related-content">
+                <h4>Related Topics</h4>
+                <div class="related-grid">
+                    <a href="#" class="related-item">
+                        <span class="related-title">Security Best Practices</span>
+                        <span class="related-desc">Learn about AWS security guidelines</span>
+                    </a>
+                    <!-- Add more related items -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Usage Guide Section -->
+        <div class="tab-pane fade" id="usage">
+            <div class="progress-tracker">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">Reading Progress: 0%</span>
+            </div>
+            <h2>Usage Guide</h2>
+
+            <h3>Getting Started</h3>
+            <ol>
+                <li>Configure AWS credentials</li>
+                <li>Select resource type</li>
+                <li>Fill in required fields</li>
+                <li>Review and create resource</li>
+            </ol>
+
+            <h3>Best Practices</h3>
+            <ul>
+                <li>Always use meaningful tags</li>
+                <li>Follow security guidelines</li>
+                <li>Monitor resource costs</li>
+                <li>Regular backup strategies</li>
+            </ul>
+
+            <h3>Common Issues</h3>
+            <div class="troubleshooting">
+                <!-- Add common issues and solutions -->
+            </div>
+
+            <div class="related-content">
+                <h4>Related Topics</h4>
+                <div class="related-grid">
+                    <a href="#" class="related-item">
+                        <span class="related-title">Security Best Practices</span>
+                        <span class="related-desc">Learn about AWS security guidelines</span>
+                    </a>
+                    <!-- Add more related items -->
+                </div>
+            </div>
+        </div>
+
+        <!-- API Reference Section -->
+        <div class="tab-pane fade" id="reference">
+            <div class="progress-tracker">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">Reading Progress: 0%</span>
+            </div>
+            <h2>API Reference</h2>
+
+            <h3>REST Endpoints</h3>
+            <div class="api-endpoints">
+                <h4>Resource Creation</h4>
+                <pre><code>POST /api/resources/{resource_type}
+Content-Type: application/json
+
+{
+    "resource_specific": "parameters"
+}</code></pre>
+
+                <h4>Resource Validation</h4>
+                <pre><code>POST /api/validate/{resource_type}
+Content-Type: application/json
+
+{
+    "parameters": "to_validate"
+}</code></pre>
+            </div>
+
+            <h3>Error Codes</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Description</th>
+                        <th>Resolution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Add error codes and descriptions -->
+                </tbody>
+            </table>
+
+            <div class="related-content">
+                <h4>Related Topics</h4>
+                <div class="related-grid">
+                    <a href="#" class="related-item">
+                        <span class="related-title">Security Best Practices</span>
+                        <span class="related-desc">Learn about AWS security guidelines</span>
+                    </a>
+                    <!-- Add more related items -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Terraform Section -->
+        <div class="tab-pane fade" id="terraform">
+            <div class="progress-tracker">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">Reading Progress: 0%</span>
+            </div>
+            <h2>Terraform Integration</h2>
+            
+            <h3>Configuration Generation</h3>
+            <p>Our application generates Terraform configurations following AWS best practices and security standards.</p>
+            
+            <h3>Resource Types</h3>
+            <div class="resource-terraform">
+                <h4>EC2 Instance</h4>
+                <pre><code>resource "aws_instance" "example" {
+  ami           = "ami-12345678"
+  instance_type = "t2.micro"
+  # ... other configurations
+}</code></pre>
+
+                <h4>RDS Database</h4>
+                <pre><code>resource "aws_db_instance" "example" {
+  engine         = "mysql"
+  instance_class = "db.t3.micro"
+  # ... other configurations
+}</code></pre>
+            </div>
+
+            <h3>Best Practices</h3>
+            <ul>
+                <li>Use of variables for reusability</li>
+                <li>Proper resource naming conventions</li>
+                <li>Security group configurations</li>
+                <li>Tagging standards</li>
+            </ul>
+
+            <div class="related-content">
+                <h4>Related Topics</h4>
+                <div class="related-grid">
+                    <a href="#" class="related-item">
+                        <span class="related-title">Security Best Practices</span>
+                        <span class="related-desc">Learn about AWS security guidelines</span>
+                    </a>
+                    <!-- Add more related items -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Section -->
+        <div class="tab-pane fade" id="security">
+            <div class="progress-tracker">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">Reading Progress: 0%</span>
+            </div>
+            <h2>Security Guidelines</h2>
+            <p class="section-intro">Comprehensive security practices for AWS resource management and protection.</p>
+            
+            <div class="security-section">
+                <h3>Authentication & Authorization</h3>
+                <div class="security-details">
+                    <h4>IAM Best Practices</h4>
+                    <ul>
+                        <li><strong>Principle of Least Privilege:</strong> Grant minimum permissions needed</li>
+                        <li><strong>IAM Roles:</strong> Use roles instead of access keys when possible</li>
+                        <li><strong>Regular Audits:</strong> Review and rotate credentials periodically</li>
+                        <li><strong>MFA:</strong> Enable Multi-Factor Authentication for all users</li>
+                    </ul>
+
+                    <h4>Access Control</h4>
+                    <ul>
+                        <li><strong>Role-Based Access:</strong> Implement RBAC for resource management</li>
+                        <li><strong>Resource Tags:</strong> Use tags for granular access control</li>
+                        <li><strong>Service Control Policies:</strong> Implement organization-wide controls</li>
+                        <li><strong>Permission Boundaries:</strong> Set maximum permissions for IAM entities</li>
+                    </ul>
+                </div>
+
+                <h3>Network Security</h3>
+                <div class="security-details">
+                    <h4>VPC Configuration</h4>
+                    <ul>
+                        <li><strong>Network Segmentation:</strong> Use public and private subnets</li>
+                        <li><strong>NACLs:</strong> Configure stateless network access controls</li>
+                        <li><strong>Security Groups:</strong> Implement stateful firewall rules</li>
+                        <li><strong>VPC Flow Logs:</strong> Enable network traffic monitoring</li>
+                    </ul>
+
+                    <h4>Connectivity</h4>
+                    <ul>
+                        <li><strong>VPN/Direct Connect:</strong> Secure connection to on-premises</li>
+                        <li><strong>Bastion Hosts:</strong> Controlled access to private resources</li>
+                        <li><strong>Transit Gateway:</strong> Centralized network management</li>
+                        <li><strong>PrivateLink:</strong> Private access to AWS services</li>
+                    </ul>
+                </div>
+
+                <h3>Data Protection</h3>
+                <div class="security-details">
+                    <h4>Encryption</h4>
+                    <ul>
+                        <li><strong>At Rest:</strong> Use KMS for data encryption</li>
+                        <li><strong>In Transit:</strong> Enable TLS for all communications</li>
+                        <li><strong>Key Management:</strong> Regular rotation of encryption keys</li>
+                        <li><strong>Secrets Management:</strong> Use AWS Secrets Manager</li>
+                    </ul>
+
+                    <h4>Backup & Recovery</h4>
+                    <ul>
+                        <li><strong>Automated Backups:</strong> Regular backup schedules</li>
+                        <li><strong>Cross-Region:</strong> Replicate data across regions</li>
+                        <li><strong>Retention Policies:</strong> Define data lifecycle rules</li>
+                        <li><strong>Disaster Recovery:</strong> Implement recovery procedures</li>
+                    </ul>
+                </div>
+
+                <h3>Monitoring & Compliance</h3>
+                <div class="security-details">
+                    <h4>Security Monitoring</h4>
+                    <ul>
+                        <li><strong>CloudTrail:</strong> Track API activity and changes</li>
+                        <li><strong>CloudWatch:</strong> Monitor resource metrics and logs</li>
+                        <li><strong>GuardDuty:</strong> Threat detection service</li>
+                        <li><strong>Security Hub:</strong> Centralized security management</li>
+                    </ul>
+
+                    <h4>Compliance Controls</h4>
+                    <ul>
+                        <li><strong>AWS Config:</strong> Resource configuration tracking</li>
+                        <li><strong>Compliance Reports:</strong> Regular security assessments</li>
+                        <li><strong>Audit Logging:</strong> Maintain detailed audit trails</li>
+                        <li><strong>Policy Enforcement:</strong> Automated compliance checks</li>
+                    </ul>
+                </div>
+
+                <h3>Security Best Practices Checklist</h3>
+                <div class="security-checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check1">
+                        <label for="check1">Enable MFA for all IAM users</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check2">
+                        <label for="check2">Implement encryption at rest for all data</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check3">
+                        <label for="check3">Configure VPC security groups and NACLs</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check4">
+                        <label for="check4">Enable CloudTrail logging</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check5">
+                        <label for="check5">Set up automated backups</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="related-content">
+                <h4>Related Topics</h4>
+                <div class="related-grid">
+                    <a href="#" class="related-item">
+                        <span class="related-title">Security Best Practices</span>
+                        <span class="related-desc">Learn about AWS security guidelines</span>
+                    </a>
+                    <!-- Add more related items -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add custom styles for the help page -->
+<style>
+.help-container {
+    padding: 2rem;
+    background: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.help-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--neon-border-color);
+}
+
+.help-navigation {
+    margin-bottom: 2rem;
+}
+
+.nav-pills .nav-link {
+    color: var(--neon-text-color);
+    background: transparent;
+    border: 1px solid var(--neon-border-color);
+    margin: 0 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.nav-pills .nav-link:hover,
+.nav-pills .nav-link.active {
+    background: var(--neon-border-color);
+    color: var(--card-bg);
+}
+
+.tab-content {
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+}
+
+.architecture-diagram img {
+    max-width: 100%;
+    height: auto;
+    margin: 2rem 0;
+}
+
+pre code {
+    display: block;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    color: var(--neon-text-color);
+}
+
+.table {
+    color: var(--text-color);
+}
+
+.search-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.highlight {
+    background-color: var(--neon-border-color);
+    color: var(--card-bg);
+    padding: 0 2px;
+    border-radius: 3px;
+}
+
+.quick-start-steps {
+    margin: 2rem 0;
+}
+
+.step {
+    display: flex;
+    margin-bottom: 1.5rem;
+    align-items: center;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--neon-border-color);
+    color: var(--card-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 1rem;
+}
+
+.step-content {
+    flex: 1;
+}
+
+/* Security Section Styles */
+.security-section {
+    padding: 1rem;
+}
+
+.section-intro {
+    font-size: 1.1rem;
+    color: #ccc;
+    margin-bottom: 2rem;
+    padding-left: 1rem;
+    border-left: 4px solid var(--neon-text-color);
+}
+
+.security-details {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1rem 0 2rem;
+    border: 1px solid rgba(8, 255, 254, 0.1);
+    transition: all 0.3s ease;
+}
+
+.security-details:hover {
+    border-color: var(--neon-border-color);
+    box-shadow: 0 0 20px rgba(8, 255, 254, 0.1);
+    transform: translateX(5px);
+}
+
+.security-details h4 {
+    color: var(--neon-border-color);
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+.security-details ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 1.5rem;
+}
+
+.security-details li {
+    margin-bottom: 0.5rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap tabs
+    var triggerTabList = [].slice.call(document.querySelectorAll('#helpTabs a'))
+    triggerTabList.forEach(function(triggerEl) {
+        var tabTrigger = new bootstrap.Tab(triggerEl)
+        triggerEl.addEventListener('click', function(event) {
+            event.preventDefault()
+            tabTrigger.show()
+        })
+    })
+});
+
+document.getElementById('docSearch').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const content = document.querySelectorAll('.tab-pane');
+    
+    content.forEach(section => {
+        const text = section.textContent.toLowerCase();
+        const matches = text.includes(searchTerm);
+        
+        // Highlight matching text
+        if (matches && searchTerm) {
+            const regex = new RegExp(searchTerm, 'gi');
+            section.innerHTML = section.innerHTML.replace(regex, match => 
+                `<span class="highlight">${match}</span>`
+            );
+        }
+    });
+});
+</script>
+
+<div class="feedback-section mt-4 pt-3 border-top">
+    <h4>Was this helpful?</h4>
+    <div class="btn-group">
+        <button class="btn btn-outline-success btn-sm feedback-btn" data-value="yes">
+            <i class="fas fa-thumbs-up"></i> Yes
+        </button>
+        <button class="btn btn-outline-danger btn-sm feedback-btn" data-value="no">
+            <i class="fas fa-thumbs-down"></i> No
+        </button>
+    </div>
+    <div class="feedback-form mt-3" style="display: none;">
+        <textarea class="form-control" placeholder="How can we improve this section?"></textarea>
+        <button class="btn btn-primary btn-sm mt-2">Submit Feedback</button>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.feedback-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const feedbackForm = this.closest('.feedback-section')
+            .querySelector('.feedback-form');
+        feedbackForm.style.display = this.dataset.value === 'no' ? 'block' : 'none';
+    });
+});
+</script>
+
+<div class="code-block">
+    <div class="code-header">
+        <span class="code-title">Example Configuration</span>
+        <button class="btn btn-sm btn-outline-primary copy-btn">
+            <i class="fas fa-copy"></i> Copy
+        </button>
+    </div>
+    <pre><code>{{ code_content }}</code></pre>
+</div>
+{% endblock %} 

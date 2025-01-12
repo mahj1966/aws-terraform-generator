@@ -1,0 +1,173 @@
+<div class="resource-specific-fields">
+    <div class="col-md-6">
+        <label class="form-label required">
+            ORIGIN DOMAIN NAME
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Domain name of your origin (e.g., your S3 bucket or web server). Must be a valid domain name or S3 bucket URL"></i>
+        </label>
+        <input type="text" class="form-control" name="origin_domain_name" required
+               data-validate="required,domain"
+               placeholder="my-bucket.s3.amazonaws.com">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            ORIGIN ID
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Unique identifier for this origin within your distribution"></i>
+        </label>
+        <input type="text" class="form-control" name="origin_id" required
+               pattern="^[a-zA-Z0-9-_]+$"
+               data-validate="required,pattern"
+               placeholder="my-s3-origin">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            PRICE CLASS
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Determines which edge locations will serve your content. More locations = higher cost"></i>
+        </label>
+        <select class="form-select" name="price_class">
+            <option value="PriceClass_All">All Edge Locations (Best Performance)</option>
+            <option value="PriceClass_200">Most Regions (Excludes Most Expensive)</option>
+            <option value="PriceClass_100">North America and Europe Only (Lowest Cost)</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            ENABLED
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Enable or disable the distribution. Disabled distributions don't serve content but still incur charges"></i>
+        </label>
+        <select class="form-select" name="enabled">
+            <option value="true">Enabled</option>
+            <option value="false">Disabled</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            DEFAULT ROOT OBJECT
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Object to serve when root URL is requested (e.g., index.html)"></i>
+        </label>
+        <input type="text" class="form-control" name="default_root_object"
+               placeholder="index.html">
+    </div>
+
+    <div class="col-md-12">
+        <label class="form-label">
+            ALTERNATE DOMAIN NAMES (CNAMES)
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Custom domain names for your distribution, one per line (e.g., www.example.com)"></i>
+        </label>
+        <textarea class="form-control" name="aliases" rows="2"
+                  data-validate="domain-list"
+                  placeholder="www.example.com&#10;cdn.example.com"></textarea>
+    </div>
+
+    <div class="ssl-config">
+        <div class="col-md-12">
+            <label class="form-label">
+                SSL CERTIFICATE ARN
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="ARN of ACM certificate for custom domains. Required if using alternate domain names"></i>
+            </label>
+            <input type="text" class="form-control" name="ssl_certificate_arn"
+                   data-validate="aws-arn"
+                   placeholder="arn:aws:acm:us-east-1:123456789012:certificate/uuid">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">
+                MINIMUM SSL PROTOCOL
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="Minimum TLS version to use for HTTPS connections. TLSv1.2 recommended for security"></i>
+            </label>
+            <select class="form-select" name="minimum_protocol_version">
+                <option value="TLSv1.2_2021">TLSv1.2 (Recommended)</option>
+                <option value="TLSv1.2_2019">TLSv1.2 (2019)</option>
+                <option value="TLSv1.1_2016">TLSv1.1</option>
+                <option value="TLSv1_2016">TLSv1</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="cache-behavior">
+        <h4 class="section-title">CACHE BEHAVIOR SETTINGS</h4>
+
+        <div class="col-md-6">
+            <label class="form-label">
+                ALLOWED HTTP METHODS
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="HTTP methods that CloudFront will process and forward to your origin"></i>
+            </label>
+            <select class="form-select" name="allowed_methods" multiple
+                    onchange="validateCacheMethods()">
+                <option value="GET">GET</option>
+                <option value="HEAD">HEAD</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="PATCH">PATCH</option>
+                <option value="DELETE">DELETE</option>
+                <option value="OPTIONS">OPTIONS</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">
+                CACHED HTTP METHODS
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="HTTP methods whose responses will be cached. Must be a subset of allowed methods"></i>
+            </label>
+            <select class="form-select" name="cached_methods" multiple
+                    onchange="validateCacheMethods()">
+                <option value="GET">GET</option>
+                <option value="HEAD">HEAD</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">
+                DEFAULT TTL
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="Default time (in seconds) that objects stay in CloudFront cache"></i>
+            </label>
+            <input type="number" class="form-control" name="default_ttl"
+                   min="0" value="86400"
+                   data-validate="min:0">
+        </div>
+    </div>
+</div>
+
+<script>
+function validateCacheMethods() {
+    const allowedMethods = Array.from(document.querySelector('select[name="allowed_methods"]').selectedOptions)
+        .map(opt => opt.value);
+    const cachedMethods = Array.from(document.querySelector('select[name="cached_methods"]').selectedOptions)
+        .map(opt => opt.value);
+    
+    const isValid = cachedMethods.every(method => allowedMethods.includes(method));
+    document.querySelector('select[name="cached_methods"]')
+        .setCustomValidity(isValid ? '' : 'Cached methods must be a subset of allowed methods');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Set default selections
+    document.querySelector('select[name="allowed_methods"]').value = ['GET', 'HEAD'];
+    document.querySelector('select[name="cached_methods"]').value = ['GET', 'HEAD'];
+});
+</script> 

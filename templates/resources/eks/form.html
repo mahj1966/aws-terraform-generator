@@ -1,0 +1,205 @@
+<div class="resource-specific-fields">
+    <div class="col-md-6">
+        <label class="form-label required">
+            CLUSTER NAME
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Name of your EKS cluster. Must be unique within your region"></i>
+        </label>
+        <input type="text" class="form-control" name="cluster_name" required
+               pattern="^[a-zA-Z][a-zA-Z0-9-]*$"
+               data-validate="required,pattern"
+               placeholder="my-eks-cluster">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            KUBERNETES VERSION
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Version of Kubernetes to run on your cluster. Choose the latest stable version unless you have specific requirements"></i>
+        </label>
+        <select class="form-select" name="kubernetes_version" required>
+            {% for version in config.kubernetes_version %}
+            <option value="{{ version }}">{{ version }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-12">
+        <label class="form-label required">
+            IAM ROLE
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="IAM role that provides permissions for the Kubernetes control plane to make AWS API calls"></i>
+        </label>
+        <input type="text" class="form-control" name="role_arn" required
+               data-validate="required,aws-arn"
+               placeholder="arn:aws:iam::123456789012:role/eks-cluster-role">
+    </div>
+
+    <div class="col-md-12">
+        <label class="form-label required">
+            SUBNET IDS
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Comma-separated list of subnet IDs where EKS will place resources. Include subnets from at least two availability zones"></i>
+        </label>
+        <input type="text" class="form-control" name="vpc_config_subnet_ids" required
+               pattern="^subnet-[a-f0-9]{8,17}(,subnet-[a-f0-9]{8,17})*$"
+               data-validate="required,pattern"
+               placeholder="subnet-123456789,subnet-987654321">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            PRIVATE ENDPOINT ACCESS
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Enable access to the Kubernetes API server from within your VPC using private IP addresses"></i>
+        </label>
+        <select class="form-select" name="endpoint_private_access">
+            <option value="true">Enabled</option>
+            <option value="false">Disabled</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            PUBLIC ENDPOINT ACCESS
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Enable access to the Kubernetes API server from the internet. Can be restricted to specific CIDR blocks"></i>
+        </label>
+        <select class="form-select" name="endpoint_public_access">
+            <option value="true">Enabled</option>
+            <option value="false">Disabled</option>
+        </select>
+    </div>
+
+    <div class="col-md-12">
+        <label class="form-label">
+            SECURITY GROUP IDS
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Additional security groups to attach to the cluster. Controls network access to the Kubernetes API server"></i>
+        </label>
+        <input type="text" class="form-control" name="security_group_ids"
+               pattern="^sg-[a-f0-9]{8,17}(,sg-[a-f0-9]{8,17})*$"
+               data-validate="pattern"
+               placeholder="sg-123456789,sg-987654321">
+    </div>
+
+    <div class="node-group-section">
+        <h4 class="section-title">NODE GROUP CONFIGURATION</h4>
+        
+        <div class="col-md-6">
+            <label class="form-label required">
+                NODE GROUP NAME
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="Name for the managed node group. Must be unique within the cluster"></i>
+            </label>
+            <input type="text" class="form-control" name="node_group_name" required
+                   pattern="^[a-zA-Z][a-zA-Z0-9-]*$"
+                   data-validate="required,pattern"
+                   placeholder="standard-workers">
+        </div>
+
+        <div class="col-md-12">
+            <label class="form-label required">
+                NODE ROLE ARN
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="IAM role for worker nodes. Must have necessary permissions for container operations and cluster communication"></i>
+            </label>
+            <input type="text" class="form-control" name="node_role_arn" required
+                   data-validate="required,aws-arn"
+                   placeholder="arn:aws:iam::123456789012:role/eks-node-group-role">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label required">
+                INSTANCE TYPES
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="EC2 instance types for worker nodes. Choose based on your workload requirements for CPU, memory, and networking"></i>
+            </label>
+            <select class="form-select" name="node_instance_types" required multiple>
+                {% for type in config.node_instance_types %}
+                <option value="{{ type }}">{{ type }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label required">
+                DISK SIZE (GB)
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="Size of the root EBS volume for each worker node. Minimum 20GB"></i>
+            </label>
+            <input type="number" class="form-control" name="disk_size" required
+                   min="20" max="2048" value="20"
+                   data-validate="required,min:20,max:2048">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label required">
+                DESIRED SIZE
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="Desired number of worker nodes in the node group"></i>
+            </label>
+            <input type="number" class="form-control" name="desired_size" required
+                   min="1" max="100" value="2"
+                   data-validate="required,min:1,max:100">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label required">
+                MAX SIZE
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="Maximum number of nodes that the node group can scale out to"></i>
+            </label>
+            <input type="number" class="form-control" name="max_size" required
+                   min="1" max="100" value="4"
+                   data-validate="required,min:1,max:100">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label required">
+                MIN SIZE
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="Minimum number of nodes that the node group must maintain"></i>
+            </label>
+            <input type="number" class="form-control" name="min_size" required
+                   min="1" max="100" value="1"
+                   data-validate="required,min:1,max:100">
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Add validation for scaling config
+    const scalingInputs = document.querySelectorAll('.scaling-config input');
+    scalingInputs.forEach(input => {
+        input.addEventListener('change', validateScalingConfig);
+    });
+});
+
+function validateScalingConfig() {
+    const minSize = parseInt(document.querySelector('input[name="min_size"]').value) || 1;
+    const maxSize = parseInt(document.querySelector('input[name="max_size"]').value) || 3;
+    const desiredSize = parseInt(document.querySelector('input[name="desired_size"]').value) || 2;
+
+    const isValid = minSize <= desiredSize && desiredSize <= maxSize;
+    
+    document.querySelector('input[name="desired_size"]').setCustomValidity(
+        isValid ? '' : 'Desired size must be between min and max size'
+    );
+}
+</script> 

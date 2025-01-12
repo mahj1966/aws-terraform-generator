@@ -1,0 +1,230 @@
+<div class="resource-specific-fields">
+    <div class="col-md-6">
+        <label class="form-label required">
+            INSTANCE TYPE
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="The compute and memory capacity of the instance (e.g., t2.micro for small workloads)"></i>
+        </label>
+        <select class="form-select" name="instance_type" required>
+            {% for type in config.instance_type %}
+            <option value="{{ type }}">{{ type }}</option>
+            {% endfor %}
+        </select>
+        <div class="invalid-feedback">Instance type is required</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            AMI ID
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Amazon Machine Image ID that contains the operating system and initial software for your instance"></i>
+        </label>
+        <input type="text" class="form-control" name="ami" required
+               pattern="^ami-[a-f0-9]{8,17}$"
+               data-validate="required,pattern"
+               placeholder="ami-0123456789abcdef0">
+        <div class="invalid-feedback">Please enter a valid AMI ID</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            SUBNET ID
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="The subnet where your instance will be launched. Determines the availability zone and network settings"></i>
+        </label>
+        <input type="text" class="form-control" name="subnet_id" required
+               pattern="^subnet-[a-f0-9]{8,17}$"
+               data-validate="required,pattern"
+               placeholder="subnet-0123456789abcdef0">
+        <div class="invalid-feedback">Please enter a valid Subnet ID</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            KEY PAIR
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="SSH key pair for secure access to your instance. Required for Linux instances, optional for Windows"></i>
+        </label>
+        <input type="text" class="form-control" name="key_name"
+               pattern="^[a-zA-Z0-9_-]+$"
+               data-validate="pattern"
+               placeholder="my-key-pair">
+        <div class="invalid-feedback">Invalid key pair name format</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            VPC ID
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="The Virtual Private Cloud where your instance will be launched. Defines the network environment"></i>
+        </label>
+        <input type="text" class="form-control" name="vpc_id" required
+               pattern="^vpc-[a-f0-9]{8,17}$"
+               data-validate="required,pattern"
+               placeholder="vpc-0123456789abcdef0">
+        <div class="invalid-feedback">Please enter a valid VPC ID</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            SECURITY GROUPS
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Security groups act as virtual firewalls controlling inbound and outbound traffic. Comma-separated list"></i>
+        </label>
+        <input type="text" class="form-control" name="security_group_ids"
+               pattern="^sg-[a-f0-9]{8,17}(,sg-[a-f0-9]{8,17})*$"
+               data-validate="pattern"
+               placeholder="sg-0123456789abcdef0,sg-1234567890abcdef1">
+        <div class="invalid-feedback">Invalid security group ID format</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            ROOT VOLUME SIZE (GB)
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Size of the root volume in gigabytes. Minimum 8GB, maximum 16384GB (16TB)"></i>
+        </label>
+        <input type="number" class="form-control" name="root_volume_size"
+               data-validate="min:8,max:16384"
+               value="8" min="8" max="16384">
+        <div class="invalid-feedback">Volume size must be between 8 and 16384 GB</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            ROOT VOLUME TYPE
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Type of EBS volume: gp2/gp3 for general purpose, io1/io2 for high performance, standard for basic"></i>
+        </label>
+        <select class="form-select" name="root_volume_type">
+            {% for type in config.root_volume_type %}
+            <option value="{{ type }}">{{ type }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            INSTANCE NAME
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="A name tag for your instance to help identify it in the AWS console"></i>
+        </label>
+        <input type="text" class="form-control" name="instance_name" required
+               data-validate="required,aws-tag"
+               placeholder="my-instance">
+        <div class="invalid-feedback">Please enter a valid instance name</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            ENVIRONMENT
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="The environment this instance belongs to (e.g., production, staging, development)"></i>
+        </label>
+        <select class="form-select" name="environment">
+            {% for env in config.environment %}
+            <option value="{{ env }}">{{ env|title }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            MONITORING
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Enable detailed monitoring for more frequent metrics (every 1 minute instead of 5 minutes)"></i>
+        </label>
+        <select class="form-select" name="monitoring">
+            <option value="false">Basic Monitoring</option>
+            <option value="true">Detailed Monitoring</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            EBS OPTIMIZED
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Optimize EBS performance by using dedicated bandwidth between EC2 and EBS"></i>
+        </label>
+        <select class="form-select" name="ebs_optimized">
+            <option value="false">Disabled</option>
+            <option value="true">Enabled</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            IAM INSTANCE PROFILE
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="IAM role that will be attached to the instance to grant AWS service permissions"></i>
+        </label>
+        <input type="text" class="form-control" name="instance_profile"
+               data-validate="aws-arn"
+               placeholder="arn:aws:iam::123456789012:instance-profile/example">
+        <div class="invalid-feedback">Invalid IAM instance profile ARN</div>
+    </div>
+
+    <div class="col-md-12">
+        <label class="form-label">
+            USER DATA
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Shell script that runs when the instance first boots. Use it to install software or configure the instance"></i>
+        </label>
+        <textarea class="form-control" name="user_data" rows="4"
+                  data-validate="script"
+                  placeholder="#!/bin/bash&#10;echo 'Hello, World!'"></textarea>
+        <div class="invalid-feedback">Invalid script format</div>
+    </div>
+</div> 
+
+<style>
+.help-icon {
+    color: var(--neon-border-color);
+    font-size: 0.9rem;
+    margin-left: 5px;
+    cursor: help;
+    transition: color 0.3s ease;
+}
+
+.help-icon:hover {
+    color: var(--neon-text-color);
+}
+
+/* Custom tooltip styling */
+.tooltip .tooltip-inner {
+    background-color: var(--card-bg);
+    color: #fff;
+    border: 1px solid var(--neon-border-color);
+    box-shadow: 0 0 10px var(--neon-border-color);
+    font-family: 'Orbitron', sans-serif;
+    padding: 8px 12px;
+    max-width: 300px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize all tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl, {
+            trigger: 'hover focus',
+            placement: 'right'
+        });
+    });
+});
+</script> 

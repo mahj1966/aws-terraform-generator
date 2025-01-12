@@ -1,0 +1,211 @@
+<div class="resource-specific-fields">
+    <div class="col-md-6">
+        <label class="form-label required">
+            ZONE NAME
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="The domain name for your hosted zone (e.g., example.com). Must be a fully qualified domain name"></i>
+        </label>
+        <input type="text" class="form-control" name="zone_name" required
+               pattern="^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$"
+               data-validate="required,domain"
+               placeholder="example.com">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            ZONE TYPE
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Public zones are accessible from the internet, private zones are only accessible within specified VPCs"></i>
+        </label>
+        <select class="form-select" name="zone_type" required
+                onchange="togglePrivateZoneFields(this.value)">
+            <option value="public">Public Hosted Zone</option>
+            <option value="private">Private Hosted Zone</option>
+        </select>
+    </div>
+
+    <div class="private-zone-fields" style="display: none;">
+        <div class="col-md-12">
+            <label class="form-label required-if-private">
+                VPC ID
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="The VPC where this private hosted zone will be accessible. Must be in the same region"></i>
+            </label>
+            <input type="text" class="form-control" name="vpc_id"
+                   pattern="^vpc-[a-f0-9]{8,17}$"
+                   data-validate="pattern"
+                   data-required-if="zone_type=private"
+                   placeholder="vpc-0123456789abcdef0">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label required-if-private">
+                VPC REGION
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="AWS region where the VPC is located"></i>
+            </label>
+            <input type="text" class="form-control" name="vpc_region"
+                   pattern="^[a-z]{2}-[a-z]+-[0-9]{1}$"
+                   data-validate="pattern"
+                   data-required-if="zone_type=private"
+                   placeholder="us-west-2">
+        </div>
+    </div>
+
+    <div class="record-sets">
+        <h4 class="section-title">RECORD SETS</h4>
+        
+        <div class="record-set-template">
+            <div class="col-md-6">
+                <label class="form-label required">
+                    RECORD NAME
+                    <i class="fas fa-question-circle help-icon" 
+                       data-bs-toggle="tooltip" 
+                       title="Name of the record (e.g., www for www.example.com). Use @ for apex/root domain"></i>
+                </label>
+                <input type="text" class="form-control" name="record_names[]" required
+                       pattern="^([a-zA-Z0-9-_.]+|\@)$"
+                       data-validate="required,pattern"
+                       placeholder="www">
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label required">
+                    RECORD TYPE
+                    <i class="fas fa-question-circle help-icon" 
+                       data-bs-toggle="tooltip" 
+                       title="DNS record type. A for IPv4, AAAA for IPv6, CNAME for alias, etc."></i>
+                </label>
+                <select class="form-select" name="record_types[]" required>
+                    {% for type in config.record_types %}
+                    <option value="{{ type }}">{{ type }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label required">
+                    TTL (SECONDS)
+                    <i class="fas fa-question-circle help-icon" 
+                       data-bs-toggle="tooltip" 
+                       title="Time To Live - how long DNS resolvers should cache this record. Lower values propagate changes faster but increase DNS queries"></i>
+                </label>
+                <input type="number" class="form-control" name="ttls[]" required
+                       min="0" max="2147483647" value="300"
+                       data-validate="required,min:0">
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label required">
+                    ROUTING POLICY
+                    <i class="fas fa-question-circle help-icon" 
+                       data-bs-toggle="tooltip" 
+                       title="How Route 53 should respond to DNS queries. Simple for single value, others for advanced routing scenarios"></i>
+                </label>
+                <select class="form-select" name="routing_policies[]" required
+                        onchange="toggleRoutingPolicyFields(this)">
+                    <option value="simple">Simple</option>
+                    <option value="weighted">Weighted</option>
+                    <option value="latency">Latency-based</option>
+                    <option value="failover">Failover</option>
+                    <option value="geolocation">Geolocation</option>
+                </select>
+            </div>
+
+            <div class="col-md-12">
+                <label class="form-label required">
+                    RECORD VALUE
+                    <i class="fas fa-question-circle help-icon" 
+                       data-bs-toggle="tooltip" 
+                       title="Value for this record (e.g., IP address for A records, domain name for CNAME). Format depends on record type"></i>
+                </label>
+                <textarea class="form-control" name="record_values[]" required rows="2"
+                         data-validate="required"
+                         placeholder="Enter record value(s), one per line"></textarea>
+            </div>
+
+            <div class="routing-policy-fields">
+                <!-- Dynamically populated based on routing policy -->
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary mt-3" onclick="addRecordSet()">
+            Add Another Record
+        </button>
+    </div>
+</div>
+
+<script>
+function togglePrivateZoneFields(zoneType) {
+    const privateFields = document.querySelector('.private-zone-fields');
+    privateFields.style.display = zoneType === 'private' ? 'block' : 'none';
+    
+    privateFields.querySelectorAll('[data-required-if]').forEach(field => {
+        field.required = zoneType === 'private';
+    });
+}
+
+function addRecordSet() {
+    const template = document.querySelector('.record-set-template').cloneNode(true);
+    template.querySelectorAll('input, select, textarea').forEach(input => {
+        input.value = '';
+        if (input.name === 'ttls[]') input.value = '300';
+    });
+    
+    document.querySelector('.record-sets').insertBefore(
+        template,
+        document.querySelector('.record-sets button')
+    );
+}
+
+function toggleRoutingPolicyFields(select) {
+    const recordSetDiv = select.closest('.record-set-template');
+    const policyFields = recordSetDiv.querySelector('.routing-policy-fields');
+    const policy = select.value;
+
+    let fieldsHtml = '';
+    switch (policy) {
+        case 'weighted':
+            fieldsHtml = `
+                <div class="col-md-6">
+                    <label class="form-label required">
+                        WEIGHT
+                        <i class="fas fa-question-circle help-icon" 
+                           data-bs-toggle="tooltip" 
+                           title="Relative weight for this record. Traffic proportion = weight/sum of all weights"></i>
+                    </label>
+                    <input type="number" class="form-control" name="weights[]" required
+                           min="0" max="255" value="1">
+                </div>`;
+            break;
+        case 'latency':
+            fieldsHtml = `
+                <div class="col-md-6">
+                    <label class="form-label required">
+                        REGION
+                        <i class="fas fa-question-circle help-icon" 
+                           data-bs-toggle="tooltip" 
+                           title="AWS region where this resource is located. Route 53 will direct users to the lowest latency region"></i>
+                    </label>
+                    <input type="text" class="form-control" name="regions[]" required
+                           pattern="^[a-z]{2}-[a-z]+-[0-9]{1}$"
+                           placeholder="us-west-2">
+                </div>`;
+            break;
+    }
+
+    policyFields.innerHTML = fieldsHtml;
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', () => {
+    const zoneType = document.querySelector('select[name="zone_type"]');
+    if (zoneType.value) {
+        togglePrivateZoneFields(zoneType.value);
+    }
+});
+</script> 

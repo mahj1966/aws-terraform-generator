@@ -1,0 +1,233 @@
+<div class="resource-specific-fields">
+    <div class="col-md-6">
+        <label class="form-label required">
+            ENGINE
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Database engine to use (MySQL, PostgreSQL, Oracle, SQL Server, MariaDB, or Aurora)"></i>
+        </label>
+        <select class="form-select" name="engine" required
+                data-validate="required"
+                onchange="updateEngineVersion(this.value)">
+            {% for engine in config.engine %}
+            <option value="{{ engine }}">{{ engine|upper }}</option>
+            {% endfor %}
+        </select>
+        <div class="invalid-feedback">Database engine is required</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            ENGINE VERSION
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Version of the database engine. Choose the latest version unless you have specific compatibility requirements"></i>
+        </label>
+        <input type="text" class="form-control" name="engine_version" required
+               data-validate="required,pattern"
+               pattern="^\d+(\.\d+)*$"
+               data-pattern-message="Must be a valid version number (e.g., 8.0.28)"
+               placeholder="8.0.28">
+        <div class="invalid-feedback">Please enter a valid engine version</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            INSTANCE CLASS
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="The compute and memory capacity of the database instance (e.g., db.t3.micro for development, db.r5.large for production)"></i>
+        </label>
+        <select class="form-select" name="instance_class" required
+                data-validate="required">
+            {% for class in config.instance_class %}
+            <option value="{{ class }}">{{ class }}</option>
+            {% endfor %}
+        </select>
+        <div class="invalid-feedback">Instance class is required</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            ALLOCATED STORAGE
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="The amount of storage (in GB) to allocate to your database. Can be increased later if needed"></i>
+        </label>
+        <input type="number" class="form-control" name="allocated_storage" required
+               data-validate="required,min:20,max:65536"
+               value="20" min="20" max="65536">
+        <div class="invalid-feedback">Storage must be between 20 and 65536 GB</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">MAX ALLOCATED STORAGE (GB)</label>
+        <input type="number" class="form-control" name="max_allocated_storage"
+               data-validate="min:20,max:65536"
+               placeholder="For autoscaling (optional)">
+        <div class="invalid-feedback">Max storage must be between 20 and 65536 GB</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            DATABASE NAME
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Name of the initial database to be created. Must be 1-64 characters. Some engines like SQL Server don't support this"></i>
+        </label>
+        <input type="text" class="form-control" name="database_name" required
+               pattern="^[a-zA-Z][a-zA-Z0-9_]*$"
+               data-validate="required,pattern"
+               data-pattern-message="Must start with a letter and contain only letters, numbers, and underscores"
+               maxlength="64">
+        <div class="invalid-feedback">Invalid database name</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            MASTER USERNAME
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Master user account for the database. Cannot be 'admin' or other reserved words"></i>
+        </label>
+        <input type="text" class="form-control" name="master_username" required
+               pattern="^[a-zA-Z][a-zA-Z0-9_]*$"
+               data-validate="required,pattern"
+               data-pattern-message="Must start with a letter and contain only letters, numbers, and underscores"
+               maxlength="16">
+        <div class="invalid-feedback">Invalid username format</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            MASTER PASSWORD
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Master user password. Must be 8-41 characters and contain at least 3 of: lowercase, uppercase, numbers, and special characters"></i>
+        </label>
+        <input type="password" class="form-control" name="master_password" required
+               pattern="^[a-zA-Z0-9!@#$%^&*()_+=-]{8,41}$"
+               data-validate="required,pattern"
+               data-pattern-message="Must be 8-41 characters and contain valid special characters">
+        <div class="invalid-feedback">Password must meet complexity requirements</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            MULTI-AZ
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Deploy a standby replica in a different Availability Zone for high availability"></i>
+        </label>
+        <select class="form-select" name="multi_az">
+            <option value="false">Single-AZ</option>
+            <option value="true">Multi-AZ</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            BACKUP RETENTION PERIOD
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Number of days to retain automated backups. 0 disables backups, max is 35 days"></i>
+        </label>
+        <input type="number" class="form-control" name="backup_retention_period"
+               data-validate="min:0,max:35"
+               value="7" min="0" max="35">
+        <div class="invalid-feedback">Backup retention must be between 0 and 35 days</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            BACKUP WINDOW
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Time window (UTC) when automated backups occur. Format: hh24:mi-hh24:mi"></i>
+        </label>
+        <input type="text" class="form-control" name="backup_window"
+               pattern="^([01][0-9]|2[0-3]):([0-5][0-9])-([01][0-9]|2[0-3]):([0-5][0-9])$"
+               data-validate="pattern"
+               data-pattern-message="Must be in format HH:MM-HH:MM (UTC)"
+               placeholder="03:00-04:00">
+        <div class="invalid-feedback">Invalid backup window format</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            MAINTENANCE WINDOW
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Weekly time window when system maintenance can occur. Format: ddd:hh24:mi-ddd:hh24:mi"></i>
+        </label>
+        <input type="text" class="form-control" name="maintenance_window"
+               pattern="^(mon|tue|wed|thu|fri|sat|sun):[0-2][0-9]:[0-5][0-9]-(mon|tue|wed|thu|fri|sat|sun):[0-2][0-9]:[0-5][0-9]$"
+               data-validate="pattern"
+               data-pattern-message="Must be in format ddd:hh:mm-ddd:hh:mm"
+               placeholder="sun:05:00-sun:06:00">
+        <div class="invalid-feedback">Invalid maintenance window format</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            STORAGE ENCRYPTED
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Enable encryption at rest using AWS KMS. Recommended for production databases"></i>
+        </label>
+        <select class="form-select" name="storage_encrypted">
+            <option value="true">Enabled</option>
+            <option value="false">Disabled</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            DELETION PROTECTION
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Prevent the database from being deleted accidentally. Recommended for production"></i>
+        </label>
+        <select class="form-select" name="deletion_protection">
+            <option value="true">Enabled</option>
+            <option value="false">Disabled</option>
+        </select>
+    </div>
+</div>
+
+<script>
+const ENGINE_VERSIONS = {
+    mysql: ['8.0.28', '8.0.27', '5.7.37'],
+    postgres: ['14.2', '13.5', '12.9'],
+    oracle: ['19.0.0.0', '12.2.0.1'],
+    sqlserver: ['15.00', '14.00', '13.00'],
+    mariadb: ['10.6.7', '10.5.13', '10.4.24'],
+    aurora: ['5.7.mysql_aurora.2.10.2', '5.7.mysql_aurora.2.09.3']
+};
+
+function updateEngineVersion(engine) {
+    const versionInput = document.querySelector('input[name="engine_version"]');
+    const versions = ENGINE_VERSIONS[engine] || [];
+    versionInput.placeholder = versions[0] || '';
+    
+    // Create datalist for version suggestions
+    let datalistId = 'engine-versions';
+    let datalist = document.getElementById(datalistId);
+    if (!datalist) {
+        datalist = document.createElement('datalist');
+        datalist.id = datalistId;
+        versionInput.parentNode.appendChild(datalist);
+    }
+    
+    datalist.innerHTML = versions.map(v => `<option value="${v}">`).join('');
+    versionInput.setAttribute('list', datalistId);
+}
+
+// Initialize engine versions on load
+document.addEventListener('DOMContentLoaded', () => {
+    const engineSelect = document.querySelector('select[name="engine"]');
+    if (engineSelect.value) {
+        updateEngineVersion(engineSelect.value);
+    }
+});
+</script> 

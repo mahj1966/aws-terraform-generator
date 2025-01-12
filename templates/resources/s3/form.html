@@ -1,0 +1,211 @@
+<div class="resource-specific-fields">
+    <div class="col-md-6">
+        <label class="form-label required">
+            BUCKET NAME
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Globally unique name for your S3 bucket. Must be lowercase and can contain hyphens"></i>
+        </label>
+        <input type="text" class="form-control" name="bucket_name" required
+               pattern="^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"
+               data-validate="required,pattern"
+               placeholder="my-unique-bucket-name">
+        <div class="invalid-feedback">Invalid bucket name format</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            VERSIONING
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Keeps multiple variants of objects in the bucket. Helps recover from unintended user actions and application failures"></i>
+        </label>
+        <select class="form-select" name="versioning" required>
+            <option value="Enabled">Enabled</option>
+            <option value="Disabled">Disabled</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            ACCESS CONTROL
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Defines who can access the bucket. 'Private' is recommended for security"></i>
+        </label>
+        <select class="form-select" name="acl" required>
+            <option value="private">Private</option>
+            <option value="public-read">Public Read</option>
+            <option value="public-read-write">Public Read/Write</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            ENCRYPTION
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Server-side encryption method. AES-256 uses S3-managed keys, aws:kms uses AWS KMS keys"></i>
+        </label>
+        <select class="form-select" name="encryption">
+            <option value="AES256">AES-256</option>
+            <option value="aws:kms">AWS KMS</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            KMS KEY ID
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="The AWS KMS key ID to use for encryption when using KMS encryption method"></i>
+        </label>
+        <input type="text" class="form-control" name="kms_master_key_id"
+               data-validate="aws-arn"
+               placeholder="arn:aws:kms:region:account:key/key-id"
+               data-depends-on="encryption=aws:kms">
+        <div class="invalid-feedback">Invalid KMS key ARN format</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            LIFECYCLE RULE
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Automatically transition objects to different storage classes or delete them after a specified period"></i>
+        </label>
+        <select class="form-select" name="lifecycle_rule_enabled">
+            <option value="false">Disabled</option>
+            <option value="true">Enabled</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            DAYS TO GLACIER
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Number of days after which objects will be moved to Glacier storage for cost optimization"></i>
+        </label>
+        <input type="number" class="form-control" name="lifecycle_days_to_glacier"
+               data-validate="min:1,max:365"
+               value="90" min="1" max="365"
+               data-depends-on="lifecycle_rule_enabled=true">
+        <div class="invalid-feedback">Days must be between 1 and 365</div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            WEBSITE HOSTING
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Enable static website hosting for this bucket to serve web content"></i>
+        </label>
+        <select class="form-select" name="website_enabled"
+                onchange="toggleWebsiteFields(this.value)">
+            <option value="false">Disabled</option>
+            <option value="true">Enabled</option>
+        </select>
+    </div>
+
+    <div class="website-fields" style="display: none;">
+        <div class="col-md-6">
+            <label class="form-label required-if-website">
+                INDEX DOCUMENT
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="The default page that is displayed when users access the website (e.g., index.html)"></i>
+            </label>
+            <input type="text" class="form-control" name="index_document"
+                   pattern="^[a-zA-Z0-9-_./]+\.[a-zA-Z0-9]+$"
+                   data-validate="pattern"
+                   data-pattern-message="Must be a valid file name with extension"
+                   placeholder="index.html"
+                   data-required-if="website_enabled=true">
+            <div class="invalid-feedback">Invalid index document name</div>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">
+                ERROR DOCUMENT
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="The page that is displayed when an error occurs (e.g., error.html)"></i>
+            </label>
+            <input type="text" class="form-control" name="error_document"
+                   pattern="^[a-zA-Z0-9-_./]+\.[a-zA-Z0-9]+$"
+                   data-validate="pattern"
+                   data-pattern-message="Must be a valid file name with extension"
+                   placeholder="error.html">
+            <div class="invalid-feedback">Invalid error document name</div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            LOGGING
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Enable server access logging to track requests made to your bucket"></i>
+        </label>
+        <select class="form-select" name="logging_enabled"
+                onchange="toggleLoggingFields(this.value)">
+            <option value="false">Disabled</option>
+            <option value="true">Enabled</option>
+        </select>
+    </div>
+
+    <div class="logging-fields" style="display: none;">
+        <div class="col-md-6">
+            <label class="form-label required-if-logging">
+                TARGET BUCKET
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="The bucket where access logs will be stored"></i>
+            </label>
+            <input type="text" class="form-control" name="logging_target_bucket"
+                   pattern="^[a-z0-9][a-z0-9.-]*[a-z0-9]$"
+                   data-validate="pattern"
+                   data-pattern-message="Must be a valid bucket name"
+                   data-required-if="logging_enabled=true">
+            <div class="invalid-feedback">Invalid target bucket name</div>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">
+                LOG PREFIX
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="A prefix for log files to organize them in the target bucket (e.g., logs/)"></i>
+            </label>
+            <input type="text" class="form-control" name="logging_target_prefix"
+                   pattern="^[a-zA-Z0-9-_./]*$"
+                   data-validate="pattern"
+                   data-pattern-message="Invalid prefix format"
+                   placeholder="logs/">
+            <div class="invalid-feedback">Invalid prefix format</div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleWebsiteFields(enabled) {
+    const websiteFields = document.querySelector('.website-fields');
+    websiteFields.style.display = enabled === 'true' ? 'block' : 'none';
+    
+    const requiredFields = websiteFields.querySelectorAll('[data-required-if]');
+    requiredFields.forEach(field => {
+        field.required = enabled === 'true';
+    });
+}
+
+function toggleLoggingFields(enabled) {
+    const loggingFields = document.querySelector('.logging-fields');
+    loggingFields.style.display = enabled === 'true' ? 'block' : 'none';
+    
+    const requiredFields = loggingFields.querySelectorAll('[data-required-if]');
+    requiredFields.forEach(field => {
+        field.required = enabled === 'true';
+    });
+}
+</script> 

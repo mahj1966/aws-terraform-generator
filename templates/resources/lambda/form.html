@@ -1,0 +1,143 @@
+<div class="resource-specific-fields">
+    <div class="col-md-6">
+        <label class="form-label required">
+            FUNCTION NAME
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Unique name for your Lambda function. Must be unique within a region"></i>
+        </label>
+        <input type="text" class="form-control" name="function_name" required
+               pattern="^[a-zA-Z0-9-_]+$"
+               data-validate="required,pattern"
+               placeholder="my-lambda-function">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            RUNTIME
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Programming language runtime for your function (e.g., Python 3.9, Node.js 18.x)"></i>
+        </label>
+        <select class="form-select" name="runtime" required>
+            {% for runtime in config.runtime %}
+            <option value="{{ runtime }}">{{ runtime }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            HANDLER
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Function entry point in your code (e.g., index.handler for Node.js, lambda_function.lambda_handler for Python)"></i>
+        </label>
+        <input type="text" class="form-control" name="handler" required
+               placeholder="index.handler">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            MEMORY SIZE (MB)
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Amount of memory available to your function. More memory also means more CPU power"></i>
+        </label>
+        <select class="form-select" name="memory_size" required>
+            {% for size in config.memory_size %}
+            <option value="{{ size }}">{{ size }} MB</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            TIMEOUT (SECONDS)
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Maximum execution time for your function. Max 900 seconds (15 minutes)"></i>
+        </label>
+        <input type="number" class="form-control" name="timeout" required
+               min="1" max="900" value="3"
+               data-validate="required,min:1,max:900">
+    </div>
+
+    <div class="col-md-12">
+        <label class="form-label">
+            ENVIRONMENT VARIABLES
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Key-value pairs available to your function code at runtime. One per line in KEY=value format"></i>
+        </label>
+        <textarea class="form-control" name="environment_variables" rows="3"
+                  placeholder="DB_HOST=mydb.example.com&#10;API_KEY=secret&#10;STAGE=prod"></textarea>
+    </div>
+
+    <div class="col-md-12">
+        <label class="form-label required">
+            IAM ROLE
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="IAM role that grants your function permission to access other AWS services"></i>
+        </label>
+        <input type="text" class="form-control" name="role_arn" required
+               data-validate="required,aws-arn"
+               placeholder="arn:aws:iam::123456789012:role/lambda-role">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            VPC ACCESS
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Enable VPC access if your function needs to access resources in a VPC"></i>
+        </label>
+        <select class="form-select" name="vpc_config_enabled"
+                onchange="toggleVpcFields(this.value)">
+            <option value="false">Disabled</option>
+            <option value="true">Enabled</option>
+        </select>
+    </div>
+
+    <div class="vpc-fields" style="display: none;">
+        <div class="col-md-12">
+            <label class="form-label required-if-vpc">
+                SUBNET IDS
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="Comma-separated list of subnet IDs where your function will run"></i>
+            </label>
+            <input type="text" class="form-control" name="vpc_subnet_ids"
+                   pattern="^subnet-[a-f0-9]{8,17}(,subnet-[a-f0-9]{8,17})*$"
+                   data-validate="pattern"
+                   data-required-if="vpc_config_enabled=true"
+                   placeholder="subnet-123456789,subnet-987654321">
+        </div>
+
+        <div class="col-md-12">
+            <label class="form-label required-if-vpc">
+                SECURITY GROUP IDS
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="Comma-separated list of security group IDs to control network access"></i>
+            </label>
+            <input type="text" class="form-control" name="vpc_security_group_ids"
+                   pattern="^sg-[a-f0-9]{8,17}(,sg-[a-f0-9]{8,17})*$"
+                   data-validate="pattern"
+                   data-required-if="vpc_config_enabled=true"
+                   placeholder="sg-123456789,sg-987654321">
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleVpcFields(enabled) {
+    const vpcFields = document.querySelector('.vpc-fields');
+    vpcFields.style.display = enabled === 'true' ? 'block' : 'none';
+    
+    vpcFields.querySelectorAll('[data-required-if]').forEach(field => {
+        field.required = enabled === 'true';
+    });
+}
+</script> 

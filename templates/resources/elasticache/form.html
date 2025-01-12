@@ -1,0 +1,151 @@
+<div class="resource-specific-fields">
+    <div class="col-md-6">
+        <label class="form-label required">
+            CLUSTER ID
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Unique identifier for your ElastiCache cluster. Must be 1-50 characters, containing only lowercase letters, numbers, or hyphens"></i>
+        </label>
+        <input type="text" class="form-control" name="cluster_id" required
+               pattern="^[a-z0-9-]+$"
+               data-validate="required,pattern"
+               placeholder="my-cache-cluster">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            ENGINE
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Cache engine to use. Redis for complex data types and persistence, Memcached for simple object caching"></i>
+        </label>
+        <select class="form-select" name="engine" required
+                onchange="updateEngineFields(this.value)">
+            <option value="redis">Redis</option>
+            <option value="memcached">Memcached</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            NODE TYPE
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="The compute and memory capacity of nodes in the cluster. Choose based on your data size and performance requirements"></i>
+        </label>
+        <select class="form-select" name="node_type" required>
+            {% for type in config.node_type %}
+            <option value="{{ type }}">{{ type }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            NUMBER OF NODES
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Number of cache nodes in the cluster. For Redis, use 1 for single node or multiple for cluster mode"></i>
+        </label>
+        <input type="number" class="form-control" name="num_cache_nodes" required
+               min="1" max="20" value="1"
+               data-validate="required,min:1,max:20">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            PARAMETER GROUP
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Parameter group that defines engine configuration. Choose based on your engine version and requirements"></i>
+        </label>
+        <select class="form-select" name="parameter_group_family" required>
+            {% for family in config.parameter_group_family %}
+            <option value="{{ family }}">{{ family }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            PORT NUMBER
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Port number on which the cache accepts connections. Default is 6379 for Redis, 11211 for Memcached"></i>
+        </label>
+        <input type="number" class="form-control" name="port" required
+               min="1024" max="65535"
+               data-validate="required,min:1024,max:65535">
+    </div>
+
+    <div class="col-md-12">
+        <label class="form-label required">
+            SECURITY GROUPS
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Security groups that control network access to your cache cluster. Must allow inbound access on the specified port"></i>
+        </label>
+        <input type="text" class="form-control" name="security_group_ids" required
+               pattern="^sg-[a-f0-9]{8,17}(,sg-[a-f0-9]{8,17})*$"
+               data-validate="required,pattern"
+               placeholder="sg-123456789,sg-987654321">
+    </div>
+
+    <div class="col-md-12">
+        <label class="form-label required">
+            SUBNET GROUP
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Subnet group that determines which subnets and IP ranges the cache nodes can use in the VPC"></i>
+        </label>
+        <input type="text" class="form-control" name="subnet_group_name" required
+               pattern="^[a-zA-Z0-9-]+$"
+               data-validate="required,pattern"
+               placeholder="my-cache-subnet-group">
+    </div>
+
+    <div class="redis-specific" style="display: none;">
+        <div class="col-md-6">
+            <label class="form-label">
+                MULTI-AZ
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="Enable automatic failover to a replica in a different Availability Zone if the primary node fails"></i>
+            </label>
+            <select class="form-select" name="multi_az">
+                <option value="false">Disabled</option>
+                <option value="true">Enabled</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">
+                BACKUP RETENTION
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="Number of days for which ElastiCache retains automatic backups. 0 disables backups"></i>
+            </label>
+            <input type="number" class="form-control" name="backup_retention_period"
+                   min="0" max="35" value="0"
+                   data-validate="min:0,max:35">
+        </div>
+    </div>
+</div>
+
+<script>
+function updateEngineFields(engine) {
+    const redisFields = document.querySelector('.redis-specific');
+    redisFields.style.display = engine === 'redis' ? 'block' : 'none';
+    
+    const portInput = document.querySelector('input[name="port"]');
+    portInput.value = engine === 'redis' ? '6379' : '11211';
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', () => {
+    const engineSelect = document.querySelector('select[name="engine"]');
+    if (engineSelect.value) {
+        updateEngineFields(engineSelect.value);
+    }
+});
+</script> 

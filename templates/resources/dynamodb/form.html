@@ -1,0 +1,125 @@
+<div class="resource-specific-fields">
+    <div class="col-md-6">
+        <label class="form-label required">
+            TABLE NAME
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Name of your DynamoDB table. Must be unique within your account in the region"></i>
+        </label>
+        <input type="text" class="form-control" name="table_name" required
+               pattern="^[a-zA-Z0-9_.-]+$"
+               data-validate="required,pattern"
+               placeholder="my-table">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            BILLING MODE
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="PROVISIONED for predictable workloads, PAY_PER_REQUEST for variable workloads or unknown traffic patterns"></i>
+        </label>
+        <select class="form-select" name="billing_mode" required
+                onchange="toggleCapacityFields(this.value)">
+            <option value="PAY_PER_REQUEST">Pay per Request</option>
+            <option value="PROVISIONED">Provisioned</option>
+        </select>
+    </div>
+
+    <div class="capacity-fields" style="display: none;">
+        <div class="col-md-6">
+            <label class="form-label required-if-provisioned">
+                READ CAPACITY
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="Number of strongly consistent reads per second (each read up to 4KB). One read capacity = 2 eventually consistent reads"></i>
+            </label>
+            <input type="number" class="form-control" name="read_capacity"
+                   min="1" max="40000" value="5"
+                   data-required-if="billing_mode=PROVISIONED">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label required-if-provisioned">
+                WRITE CAPACITY
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="Number of 1KB writes per second. Plan your capacity based on your application's write patterns"></i>
+            </label>
+            <input type="number" class="form-control" name="write_capacity"
+                   min="1" max="40000" value="5"
+                   data-required-if="billing_mode=PROVISIONED">
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            PARTITION KEY
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Primary key attribute that DynamoDB uses to partition data. Choose a key with high cardinality for better distribution"></i>
+        </label>
+        <input type="text" class="form-control" name="hash_key" required
+               pattern="^[a-zA-Z0-9_.-]+$"
+               data-validate="required,pattern"
+               placeholder="user_id">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            SORT KEY
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Optional secondary key for hierarchical organization of data within a partition. Useful for range queries"></i>
+        </label>
+        <input type="text" class="form-control" name="range_key"
+               pattern="^[a-zA-Z0-9_.-]+$"
+               data-validate="pattern"
+               placeholder="timestamp">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            STREAM ENABLED
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Enable DynamoDB Streams to capture table changes for event-driven architectures"></i>
+        </label>
+        <select class="form-select" name="stream_enabled">
+            <option value="false">Disabled</option>
+            <option value="true">Enabled</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            POINT IN TIME RECOVERY
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Enable continuous backups for point-in-time recovery within the last 35 days"></i>
+        </label>
+        <select class="form-select" name="point_in_time_recovery">
+            <option value="false">Disabled</option>
+            <option value="true">Enabled</option>
+        </select>
+    </div>
+</div>
+
+<script>
+function toggleCapacityFields(mode) {
+    const capacityFields = document.querySelector('.capacity-fields');
+    capacityFields.style.display = mode === 'PROVISIONED' ? 'block' : 'none';
+    
+    capacityFields.querySelectorAll('[data-required-if]').forEach(field => {
+        field.required = mode === 'PROVISIONED';
+    });
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', () => {
+    const billingMode = document.querySelector('select[name="billing_mode"]');
+    if (billingMode.value) {
+        toggleCapacityFields(billingMode.value);
+    }
+});
+</script> 

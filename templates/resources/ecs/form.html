@@ -1,0 +1,89 @@
+<div class="resource-specific-fields">
+    <div class="col-md-6">
+        <label class="form-label required">
+            CLUSTER NAME
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Name of your ECS cluster. Must be unique within your account in this region"></i>
+        </label>
+        <input type="text" class="form-control" name="cluster_name" required
+               pattern="^[a-zA-Z0-9-_]+$"
+               data-validate="required,pattern"
+               placeholder="my-ecs-cluster">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            LAUNCH TYPE
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Launch type for your ECS tasks. FARGATE for serverless, EC2 for managed instances"></i>
+        </label>
+        <select class="form-select" name="launch_type" required>
+            <option value="FARGATE">Fargate</option>
+            <option value="EC2">EC2</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            TASK DEFINITION
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="ARN of the task definition to use for running tasks in this cluster"></i>
+        </label>
+        <input type="text" class="form-control" name="task_definition" required
+               data-validate="aws-arn"
+               placeholder="arn:aws:ecs:region:account:task-definition/task-name">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            VPC NETWORK MODE
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Network mode for the task. BRIDGE for default Docker networking, AWSVPC for VPC networking"></i>
+        </label>
+        <select class="form-select" name="network_mode">
+            <option value="BRIDGE">Bridge</option>
+            <option value="AWSVPC">AWSVPC</option>
+            <option value="HOST">Host</option>
+            <option value="NONE">None</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            DESIRED TASKS
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Number of tasks to run in the cluster. Adjust based on your workload requirements"></i>
+        </label>
+        <input type="number" class="form-control" name="desired_tasks"
+               min="1" max="100" value="1"
+               data-validate="min:1,max:100">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            ENABLE EXECUTE COMMAND
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Enable ECS Exec to run commands in a running container. Requires AWS CLI v2"></i>
+        </label>
+        <select class="form-select" name="enable_execute_command">
+            <option value="false">Disabled</option>
+            <option value="true">Enabled</option>
+        </select>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script> 

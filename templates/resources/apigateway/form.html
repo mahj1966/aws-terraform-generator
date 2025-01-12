@@ -1,0 +1,179 @@
+<div class="resource-specific-fields">
+    <div class="col-md-6">
+        <label class="form-label required">
+            API NAME
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Name of your API Gateway. Must be unique within your account in this region"></i>
+        </label>
+        <input type="text" class="form-control" name="name" required
+               pattern="^[a-zA-Z0-9-_]+$"
+               data-validate="required,pattern"
+               placeholder="my-api">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            PROTOCOL TYPE
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="REST for standard REST APIs, HTTP for HTTP APIs (lower latency), WebSocket for real-time communication"></i>
+        </label>
+        <select class="form-select" name="protocol_type" required
+                onchange="toggleEndpointConfig(this.value)">
+            <option value="REST">REST</option>
+            <option value="HTTP">HTTP</option>
+            <option value="WEBSOCKET">WebSocket</option>
+        </select>
+    </div>
+
+    <div class="endpoint-config">
+        <div class="col-md-6">
+            <label class="form-label required">
+                ENDPOINT TYPE
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="REGIONAL for same-region clients, EDGE for global access with CloudFront, PRIVATE for VPC-only access"></i>
+            </label>
+            <select class="form-select" name="endpoint_type" required>
+                <option value="REGIONAL">Regional</option>
+                <option value="EDGE">Edge Optimized</option>
+                <option value="PRIVATE">Private</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">
+                AUTHORIZATION TYPE
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="How to authorize API calls. NONE for public APIs, IAM for AWS IAM, COGNITO for user pools, CUSTOM for Lambda authorizers"></i>
+            </label>
+            <select class="form-select" name="authorization_type"
+                    onchange="toggleAuthConfig(this.value)">
+                <option value="NONE">None</option>
+                <option value="IAM">IAM</option>
+                <option value="COGNITO">Cognito</option>
+                <option value="CUSTOM">Custom Authorizer</option>
+            </select>
+        </div>
+
+        <div class="cognito-config" style="display: none;">
+            <div class="col-md-12">
+                <label class="form-label required-if-cognito">
+                    COGNITO USER POOL ARN
+                    <i class="fas fa-question-circle help-icon" 
+                       data-bs-toggle="tooltip" 
+                       title="ARN of the Cognito User Pool to use for authentication"></i>
+                </label>
+                <input type="text" class="form-control" name="cognito_user_pool_arn"
+                       data-validate="aws-arn"
+                       data-required-if="authorization_type=COGNITO"
+                       placeholder="arn:aws:cognito-idp:region:account:userpool/pool-id">
+            </div>
+        </div>
+
+        <div class="custom-auth-config" style="display: none;">
+            <div class="col-md-12">
+                <label class="form-label required-if-custom">
+                    AUTHORIZER LAMBDA ARN
+                    <i class="fas fa-question-circle help-icon" 
+                       data-bs-toggle="tooltip" 
+                       title="ARN of the Lambda function that will handle authorization"></i>
+                </label>
+                <input type="text" class="form-control" name="authorizer_lambda_arn"
+                       data-validate="aws-arn"
+                       data-required-if="authorization_type=CUSTOM"
+                       placeholder="arn:aws:lambda:region:account:function:name">
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            ENABLE CORS
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Enable Cross-Origin Resource Sharing to allow requests from different domains"></i>
+        </label>
+        <select class="form-select" name="enable_cors"
+                onchange="toggleCorsFields(this.value)">
+            <option value="false">Disabled</option>
+            <option value="true">Enabled</option>
+        </select>
+    </div>
+
+    <div class="cors-fields" style="display: none;">
+        <div class="col-md-12">
+            <label class="form-label required-if-cors">
+                ALLOWED ORIGINS
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="Domains allowed to make requests to this API. Use * for any domain (not recommended for production)"></i>
+            </label>
+            <textarea class="form-control" name="allowed_origins" rows="2"
+                      data-required-if="enable_cors=true"
+                      placeholder="https://example.com&#10;https://app.example.com"></textarea>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label required-if-cors">
+                ALLOWED METHODS
+                <i class="fas fa-question-circle help-icon" 
+                   data-bs-toggle="tooltip" 
+                   title="HTTP methods allowed in CORS requests"></i>
+            </label>
+            <select class="form-select" name="allowed_cors_methods" multiple
+                    data-required-if="enable_cors=true">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="DELETE">DELETE</option>
+                <option value="PATCH">PATCH</option>
+                <option value="HEAD">HEAD</option>
+                <option value="OPTIONS">OPTIONS</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleEndpointConfig(protocolType) {
+    const endpointConfig = document.querySelector('.endpoint-config');
+    endpointConfig.style.display = protocolType === 'WEBSOCKET' ? 'none' : 'block';
+}
+
+function toggleAuthConfig(authType) {
+    const cognitoConfig = document.querySelector('.cognito-config');
+    const customAuthConfig = document.querySelector('.custom-auth-config');
+    
+    cognitoConfig.style.display = authType === 'COGNITO' ? 'block' : 'none';
+    customAuthConfig.style.display = authType === 'CUSTOM' ? 'block' : 'none';
+    
+    document.querySelectorAll('[data-required-if]').forEach(field => {
+        const [reqType, reqValue] = field.dataset.requiredIf.split('=');
+        field.required = reqType === 'authorization_type' && reqValue === authType;
+    });
+}
+
+function toggleCorsFields(enabled) {
+    const corsFields = document.querySelector('.cors-fields');
+    corsFields.style.display = enabled === 'true' ? 'block' : 'none';
+    
+    document.querySelectorAll('[data-required-if]').forEach(field => {
+        const [reqType, reqValue] = field.dataset.requiredIf.split('=');
+        field.required = reqType === 'enable_cors' && reqValue === enabled;
+    });
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', () => {
+    const protocolType = document.querySelector('select[name="protocol_type"]');
+    const authType = document.querySelector('select[name="authorization_type"]');
+    const corsEnabled = document.querySelector('select[name="enable_cors"]');
+    
+    if (protocolType.value) toggleEndpointConfig(protocolType.value);
+    if (authType.value) toggleAuthConfig(authType.value);
+    if (corsEnabled.value) toggleCorsFields(corsEnabled.value);
+});
+</script> 

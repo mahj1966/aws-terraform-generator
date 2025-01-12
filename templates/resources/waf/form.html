@@ -1,0 +1,192 @@
+<div class="resource-specific-fields">
+    <div class="col-md-6">
+        <label class="form-label required">
+            WEB ACL NAME
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Name for your Web ACL. Must be unique within your account"></i>
+        </label>
+        <input type="text" class="form-control" name="name" required
+               pattern="^[a-zA-Z0-9-_]+$"
+               data-validate="required,pattern"
+               placeholder="my-web-acl">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            SCOPE
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="REGIONAL for ALB/API Gateway, CLOUDFRONT for CloudFront distributions"></i>
+        </label>
+        <select class="form-select" name="scope" required>
+            <option value="REGIONAL">Regional</option>
+            <option value="CLOUDFRONT">CloudFront (Global)</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label required">
+            DEFAULT ACTION
+            <i class="fas fa-question-circle help-icon" 
+               data-bs-toggle="tooltip" 
+               title="Action to take when no rules match. ALLOW for whitelist approach, BLOCK for blacklist approach"></i>
+        </label>
+        <select class="form-select" name="default_action" required>
+            <option value="ALLOW">Allow</option>
+            <option value="BLOCK">Block</option>
+        </select>
+    </div>
+
+    <div class="rules-section">
+        <h4 class="section-title">RULES</h4>
+        
+        <div class="rule-template">
+            <div class="col-md-6">
+                <label class="form-label required">
+                    RULE NAME
+                    <i class="fas fa-question-circle help-icon" 
+                       data-bs-toggle="tooltip" 
+                       title="Unique name for this rule within the Web ACL"></i>
+                </label>
+                <input type="text" class="form-control" name="rule_names[]" required
+                       pattern="^[a-zA-Z0-9-_]+$"
+                       data-validate="required,pattern"
+                       placeholder="rate-limit-rule">
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label required">
+                    RULE TYPE
+                    <i class="fas fa-question-circle help-icon" 
+                       data-bs-toggle="tooltip" 
+                       title="Type of rule to create. Each type has different configuration options"></i>
+                </label>
+                <select class="form-select" name="rule_types[]" required
+                        onchange="toggleRuleFields(this)">
+                    <option value="RATE_BASED">Rate Based</option>
+                    <option value="IP_MATCH">IP Match</option>
+                    <option value="GEO_MATCH">Geo Match</option>
+                    <option value="STRING_MATCH">String Match</option>
+                    <option value="REGEX_PATTERN">Regex Pattern</option>
+                    <option value="MANAGED">AWS Managed Rule</option>
+                </select>
+            </div>
+
+            <div class="rule-specific-fields">
+                <!-- Dynamically populated based on rule type -->
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label required">
+                    PRIORITY
+                    <i class="fas fa-question-circle help-icon" 
+                       data-bs-toggle="tooltip" 
+                       title="Order in which rules are evaluated. Lower numbers are evaluated first"></i>
+                </label>
+                <input type="number" class="form-control" name="priorities[]" required
+                       min="0" value="0"
+                       data-validate="required,min:0">
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label required">
+                    ACTION
+                    <i class="fas fa-question-circle help-icon" 
+                       data-bs-toggle="tooltip" 
+                       title="Action to take when rule matches. COUNT is useful for testing before enforcing"></i>
+                </label>
+                <select class="form-select" name="actions[]" required>
+                    <option value="ALLOW">Allow</option>
+                    <option value="BLOCK">Block</option>
+                    <option value="COUNT">Count</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary mt-3" onclick="addRule()">
+            Add Another Rule
+        </button>
+    </div>
+</div>
+
+<script>
+const RULE_TYPE_FIELDS = {
+    'RATE_BASED': `
+        <div class="col-md-6">
+            <label class="form-label required">RATE LIMIT</label>
+            <input type="number" class="form-control" name="rate_limits[]" required
+                   min="100" max="2000000" value="2000"
+                   data-validate="required,min:100,max:2000000">
+            <div class="invalid-feedback">Rate must be between 100 and 2,000,000</div>
+        </div>
+    `,
+    'IP_MATCH': `
+        <div class="col-md-12">
+            <label class="form-label required">IP ADDRESSES/RANGES</label>
+            <textarea class="form-control" name="ip_ranges[]" required rows="3"
+                      data-validate="required,ip-list"
+                      placeholder="1.2.3.4/32&#10;5.6.7.8/32&#10;9.10.11.0/24"></textarea>
+        </div>
+    `,
+    'GEO_MATCH': `
+        <div class="col-md-12">
+            <label class="form-label required">COUNTRY CODES</label>
+            <textarea class="form-control" name="country_codes[]" required rows="3"
+                      data-validate="required"
+                      placeholder="US&#10;CA&#10;GB"></textarea>
+        </div>
+    `,
+    'STRING_MATCH': `
+        <div class="col-md-12">
+            <label class="form-label required">MATCH PATTERNS</label>
+            <textarea class="form-control" name="match_patterns[]" required rows="3"
+                      data-validate="required"
+                      placeholder="badbot&#10;malicious&#10;exploit"></textarea>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label required">MATCH FIELD</label>
+            <select class="form-select" name="match_fields[]" required>
+                <option value="URI">URI Path</option>
+                <option value="QUERY_STRING">Query String</option>
+                <option value="HEADER">Header</option>
+                <option value="METHOD">HTTP Method</option>
+                <option value="BODY">Body</option>
+            </select>
+        </div>
+    `,
+    'MANAGED': `
+        <div class="col-md-6">
+            <label class="form-label required">MANAGED RULE GROUP</label>
+            <select class="form-select" name="managed_rules[]" required>
+                <option value="AWSManagedRulesCommonRuleSet">Common Rule Set</option>
+                <option value="AWSManagedRulesKnownBadInputsRuleSet">Known Bad Inputs</option>
+                <option value="AWSManagedRulesSQLiRuleSet">SQL Injection</option>
+                <option value="AWSManagedRulesLinuxRuleSet">Linux OS</option>
+                <option value="AWSManagedRulesWindowsRuleSet">Windows OS</option>
+            </select>
+        </div>
+    `
+};
+
+function toggleRuleFields(select) {
+    const ruleType = select.value;
+    const ruleDiv = select.closest('.rule-template');
+    const specificFields = ruleDiv.querySelector('.rule-specific-fields');
+    
+    specificFields.innerHTML = RULE_TYPE_FIELDS[ruleType] || '';
+}
+
+function addRule() {
+    const template = document.querySelector('.rule-template').cloneNode(true);
+    template.querySelectorAll('input, select, textarea').forEach(input => {
+        input.value = '';
+        if (input.name === 'priorities[]') input.value = '0';
+    });
+    
+    document.querySelector('.rules-section').insertBefore(
+        template,
+        document.querySelector('.rules-section button')
+    );
+}
+</script> 

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<div class="resource-grid">
+    {% for resource_type, config in resources.items() %}
+        {% include 'resources/' + resource_type + '_icon.html' %}
+    {% endfor %}
+</div>
+{% endblock %} 
